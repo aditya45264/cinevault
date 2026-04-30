@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineVault — Discover Your Next Obsession</title>
+  <meta name="description" content="Discover movies, TV shows and web series. Get personalized recommendations, build your watchlist, and share reviews.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-logo">CINEVAULT</div>
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="movieModal"></div>
+</div>
+
+<!-- ========== NAVBAR ========== -->
+<div class="navbar" id="navbar">
+  <a href="#" class="nav-logo" onclick="navigateTo('home')">CINEVAULT</a>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+    <li><a href="#" class="nav-link" data-page="explore">Explore</a></li>
+    <li><a href="#" class="nav-link" data-page="dashboard" id="navDashboard" style="display:none">Dashboard</a></li>
+    <li><a href="#" class="nav-link" data-page="watchlist" id="navWatchlist" style="display:none">Watchlist</a></li>
+    <li><a href="#" class="nav-link" data-page="quiz"> What to Watch?</a></li>
+    <li><a href="#" class="nav-link" data-page="login" id="navLogin">Login</a></li>
+    <li><a href="#" class="nav-link" data-page="register" id="navRegister">Register</a></li>
+    <li><a href="javascript:void(0)" class="nav-link" data-page="timeline" id="navTimeline" style="display:none">📅 Timeline</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button id="searchBtn" class="search-btn">
+      <svg viewBox="0 0 24 24" width="22" height="22">
+        <path d="M10 18a8 8 0 1 1 5.3-14.3A8 8 0 0 1 10 18zm11 3-6-6"
+         stroke="currentColor" stroke-width="2" fill="none"/>
+      </svg>
+    </button>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">☀️</button>
+
+    <div class="nav-avatar" id="userMenu" style="display:none" title="Profile">
+      <span id="navUserName">U</span>
+     <div class="nav-dropdown" id="userDropdown">
+  <a href="javascript:void(0)" onclick="event.stopPropagation(); navigateTo('profile')">👤 Profile</a>
+  <a href="javascript:void(0)" onclick="event.stopPropagation(); navigateTo('watchlist')">🔖 Watchlist</a>
+  <hr>
+  <a href="javascript:void(0)" id="logoutBtn">🚪 Logout</a>
+</div>
+    </div>
+  </div>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- ========== HOME PAGE ========== -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🔥 Trending Today</div>
+      <h1 class="hero-title" id="heroTitle">Loading...</h1>
+      <div class="hero-meta">
+        <span class="rating" id="heroRating">⭐ —</span>
+        <span id="heroYear">—</span>
+      </div>
+      <p class="hero-overview" id="heroOverview">Fetching the best content for you...</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="heroDetails">▶ View Details</button>
+        <button class="btn btn-secondary" onclick="navigateTo('explore')">🔍 Explore More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trending -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 <span>Trending</span> This Week</h2>
+      <a href="#" class="see-all" onclick="navigateTo('explore')">See All →</a>
+    </div>
+    <div class="content-row" id="trendingRow"></div>
+  </section>
+
+  <!-- Popular Movies -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">🎬 Popular <span>Movies</span></h2>
+      <a href="#" class="see-all" onclick="navigateTo('explore')">See All →</a>
+    </div>
+    <div class="content-row" id="popularMoviesRow"></div>
+  </section>
+
+  <!-- Popular TV -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">📺 Popular <span>TV Shows</span></h2>
+      <a href="#" class="see-all" onclick="navigateTo('explore')">See All →</a>
+    </div>
+    <div class="content-row" id="popularTVRow"></div>
+  </section>
+
+  <!-- Top Rated -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">⭐ <span>Top Rated</span> All Time</h2>
+      <a href="#" class="see-all" onclick="navigateTo('explore')">See All →</a>
+    </div>
+    <div class="content-row" id="topRatedRow"></div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:4rem 2rem;text-align:center;background:linear-gradient(135deg, rgba(229,57,53,0.05), rgba(229,57,53,0.02))">
+    <h2 style="font-family:var(--font-display);font-size:2.5rem;letter-spacing:2px;margin-bottom:0.75rem">Not Sure What to Watch?</h2>
+    <p style="color:var(--text-secondary);margin-bottom:1.5rem">Take our personalized quiz and get recommendations tailored to your mood</p>
+    <button class="btn btn-primary" onclick="navigateTo('quiz')">🎯 Take the Quiz</button>
+  </section>
+
+</div>
+
+<!-- ========== LOGIN PAGE ========== -->
+<div class="auth-container page" id="page-login">
+  <div class="auth-left">
+    <h1>Welcome Back 🍿</h1>
+    <p>Continue your movie journey</p>
+  </div>
+  <div class="auth-right">
+    <form id="loginForm" class="auth-form">
+      <h2>Login</h2>
+      <input class="form-input" type="email" id="loginEmail" placeholder="Email" required />
+      <input class="form-input" type="password" id="loginPassword" placeholder="Password" required />
+      <div class="form-error"></div>
+      <button type="submit" style="display:block;width:100%;padding:0.875rem;background:linear-gradient(135deg,#e53935,#c62828);color:white;border-radius:8px;font-size:1rem;font-weight:700;border:none;cursor:pointer;margin-top:0.5rem;">Sign In</button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.875rem;color:var(--text-secondary)">
+        New here? <a href="#" onclick="navigateTo('register')" style="color:var(--accent)">Create account</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- ========== REGISTER PAGE ========== -->
+<div class="auth-container page" id="page-register">
+  <div class="auth-left">
+    <h1>Join Cine World 🎬</h1>
+    <p>Discover, review & binge your favorites</p>
+  </div>
+  <div class="auth-right">
+    <form id="registerForm" class="auth-form">
+      <h2>Create Account</h2>
+      <input class="form-input" type="text" id="regName" placeholder="Full Name" required />
+      <input class="form-input" type="email" id="regEmail" placeholder="Email" required />
+      <input class="form-input" type="number" id="regAge" placeholder="Age" min="13" max="120" required />
+      <input class="form-input" type="password" id="regPassword" placeholder="Password" required />
+      <input class="form-input" type="password" id="regConfirmPassword" placeholder="Confirm Password" required />
+      <div class="form-error"></div>
+      <button type="submit" style="display:block;width:100%;padding:0.875rem;background:linear-gradient(135deg,#e53935,#c62828);color:white;border-radius:8px;font-size:1rem;font-weight:700;border:none;cursor:pointer;margin-top:0.5rem;">Create Account</button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.875rem;color:var(--text-secondary)">
+        Already have an account? <a href="#" onclick="navigateTo('login')" style="color:var(--accent)">Login</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard-header">
+    <p class="dashboard-greeting">Good to see you 👋</p>
+    <h1 class="dashboard-title" id="dashName">Loading...</h1>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number" id="dashWatchlistCount">0</div>
+      <div class="stat-label">Watchlist Items</div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="navigateTo('explore')">
+      <div class="stat-number" style="color:var(--gold)">∞</div>
+      <div class="stat-label">Titles to Explore</div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="navigateTo('quiz')">
+      <div class="stat-number" style="color:var(--success)">🎯</div>
+      <div class="stat-label">What to Watch?</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 <span>Trending</span> Now</h2>
+    </div>
+    <div class="content-row" id="dashRecentRow"></div>
+  </section>
+
+  <section style="padding:1rem 2rem 3rem">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem">
+      <div class="stat-card" style="cursor:pointer;text-align:left;padding:1.5rem" onclick="navigateTo('watchlist')">
+        <div style="font-size:2rem;margin-bottom:0.75rem">🔖</div>
+        <div style="font-weight:700;margin-bottom:0.25rem">My Watchlist</div>
+        <div style="font-size:0.875rem;color:var(--text-secondary)">View and manage your saved content</div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;text-align:left;padding:1.5rem" onclick="navigateTo('explore')">
+        <div style="font-size:2rem;margin-bottom:0.75rem">🔍</div>
+        <div style="font-weight:700;margin-bottom:0.25rem">Explore Content</div>
+        <div style="font-size:0.875rem;color:var(--text-secondary)">Browse movies, shows and more</div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;text-align:left;padding:1.5rem" onclick="navigateTo('quiz')">
+        <div style="font-size:2rem;margin-bottom:0.75rem">🎯</div>
+        <div style="font-weight:700;margin-bottom:0.25rem">Get Recommendations</div>
+        <div style="font-size:0.875rem;color:var(--text-secondary)">Take the mood quiz for perfect picks</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== EXPLORE PAGE ========== -->
+<div class="page" id="page-explore">
+  <div class="explore-header">
+    <h1 style="font-family:var(--font-display);font-size:2rem;letter-spacing:1px;margin-bottom:1rem">🔍 Explore <span style="color:var(--accent)">Content</span></h1>
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" id="exploreSearch" placeholder="Search movies, shows, actors...">
+    </div>
+    <div class="filters" id="exploreTypeFilter" style="margin-top:1rem">
+      <button class="filter-btn active" data-type="movie">🎬 Movies</button>
+      <button class="filter-btn" data-type="tv">📺 TV Shows</button>
+    </div>
+    <div class="filters" id="genreFilters" style="margin-top:0.5rem">
+      <!-- Genre filters loaded dynamically -->
+    </div>
+  </div>
+
+  <div class="tabs" id="exploreTabs">
+    <button class="tab-btn active" data-tab="popular">Popular</button>
+    <button class="tab-btn" data-tab="trending">Trending</button>
+    <button class="tab-btn" data-tab="top-rated">Top Rated</button>
+  </div>
+
+  <div class="content-grid" id="exploreGrid"></div>
+
+  <div style="text-align:center;padding:2rem">
+    <button class="btn btn-secondary" id="loadMoreBtn">Load More</button>
+  </div>
+</div>
+
+<!-- ========== WATCHLIST PAGE ========== -->
+<div class="page" id="page-watchlist">
+  <div style="padding:2rem 2rem 1rem">
+    <h1 style="font-family:var(--font-display);font-size:2rem;letter-spacing:1px">🔖 My <span style="color:var(--accent)">Watchlist</span></h1>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem">Your saved movies and shows</p>
+  </div>
+  <div class="watchlist-grid" id="watchlistGrid">
+    <div class="loading-spinner"></div>
+  </div>
+</div>
+
+<!-- ========== TIMELINE PAGE ========== -->
+<div class="page" id="page-timeline">
+  <div style="padding:2rem 2rem 1rem">
+    <h1 style="font-family:var(--font-display);font-size:2rem;letter-spacing:1px">📅 My <span style="color:var(--accent)">Timeline</span></h1>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem">Your watch history and reviews</p>
+  </div>
+
+  <!-- Add to timeline -->
+  <div style="padding:0 2rem 1.5rem;max-width:800px">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem">
+      <div style="font-weight:700;margin-bottom:1rem">➕ Add to Timeline</div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <input class="form-input" type="text" id="timelineSearch" placeholder="Search for a movie or show..." style="flex:1;min-width:200px" />
+        <input class="form-input" type="date" id="timelineDate" style="width:180px" max="${new Date().toISOString().split('T')[0]}" />
+        <button class="btn btn-primary" id="timelineAddBtn">Add</button>
+      </div>
+      <div id="timelineSearchResults" style="margin-top:0.75rem"></div>
+    </div>
+  </div>
+
+  <div id="timelineContainer" style="padding:0 2rem 2rem;max-width:800px">
+    <div class="loading-spinner"></div>
+  </div>
+</div>
+<!-- ========== QUIZ PAGE ========== -->
+<div class="page" id="page-quiz">
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <div class="quiz-header-title">Find Your <span>Perfect</span> Watch</div>
+      <p style="color:var(--text-secondary)">Answer 10 quick questions to get personalized recommendations</p>
+    </div>
+    <div id="quizContent">
+      <!-- Quiz steps rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROFILE PAGE ========== -->
+<div class="page" id="page-profile">
+  <div class="profile-header">
+    <div class="profile-avatar-large" id="profileAvatar" style="cursor:pointer" title="Click to change photo">U</div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" />
+<input type="file" id="avatarInput" accept="image/*" style="display:none" />
+    <div>
+      <h1 class="profile-name" id="profileName">Loading...</h1>
+      <p class="profile-email" id="profileEmail">—</p>
+      <p class="profile-joined" id="profileJoined">—</p>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem">
+      <div class="stat-card">
+        <div class="stat-number" id="profileWatchlistCount">0</div>
+        <div class="stat-label">Watchlist Items</div>
+      </div>
+    </div>
+    <div class="profile-section">
+  <div class="profile-section-title">✏️ Edit Profile</div>
+  <form id="editProfileForm" style="display:flex;flex-direction:column;gap:1rem;max-width:400px">
+    <div>
+      <label style="font-size:0.875rem;color:var(--text-secondary);display:block;margin-bottom:0.5rem">Full Name</label>
+      <input class="form-input" type="text" id="editName" placeholder="Your name" />
+    </div>
+    <div>
+      <label style="font-size:0.875rem;color:var(--text-secondary);display:block;margin-bottom:0.5rem">Email</label>
+      <input class="form-input" type="email" id="editEmail" placeholder="Your email" />
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:1rem">
+      <div style="font-size:0.875rem;font-weight:600;margin-bottom:0.75rem">Change Password</div>
+      <input class="form-input" type="password" id="editCurrentPassword" placeholder="Current password" style="margin-bottom:0.75rem" />
+      <input class="form-input" type="password" id="editNewPassword" placeholder="New password" style="margin-bottom:0.75rem" />
+      <input class="form-input" type="password" id="editConfirmNewPassword" placeholder="Confirm new password" />
+    </div>
+    <div class="form-error" id="editProfileError"></div>
+    <button type="submit" style="display:block;width:100%;padding:0.875rem;background:linear-gradient(135deg,#e53935,#c62828);color:white;border-radius:8px;font-size:1rem;font-weight:700;border:none;cursor:pointer;">Save Changes</button>
+  </form>
+</div>
+    <div class="profile-section">
+      <div class="profile-section-title">🚪 Account</div>
+      <button class="btn btn-ghost" style="color:var(--error);border:1px solid rgba(244,67,54,0.3);border-radius:var(--radius-sm);padding:0.625rem 1rem" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  // Initialize genre filters when explore page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    loadGenreFilters();
+  });
+</script>
+</body>
+</html>
