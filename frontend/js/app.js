@@ -1,7 +1,7 @@
 console.log("✅ app.js is running");
 
 // ========== CONFIG ==========
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://cinevault-ufv5.onrender.com/api';
 const TMDB_IMG = 'https://image.tmdb.org/t/p';
 
 
