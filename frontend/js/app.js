@@ -413,7 +413,7 @@ async function loadPage(page) {
     case 'watchlist': await loadWatchlistPage(); break;
     case 'timeline': await loadTimeline(); break;
     case 'profile': await loadProfile(); break;
-    case 'quiz': initQuiz(); break;
+    case 'quiz': if (!state.user) { showToast('Please log in first', 'error'); return navigateTo('login'); } initQuiz(); break;
   }
 }
 
@@ -1045,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const page = e.currentTarget.dataset.page;
-      const protectedPages = ['dashboard','watchlist','profile'];
+      const protectedPages = ['dashboard','watchlist','profile','quiz','timeline'];
       if (protectedPages.includes(page) && !state.user) {
         showToast('Please log in first', 'error');
         return navigateTo('login');
