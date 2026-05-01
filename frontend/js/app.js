@@ -1262,7 +1262,7 @@ if (dateInput) {
       const results = data.results?.slice(0, 5);
       const resultsEl = document.getElementById('timelineSearchResults');
       resultsEl.innerHTML = results.map(item => `
-        <div class="suggestion-item" data-id="${item.id}" data-type="${item.media_type || 'movie'}" data-title="${item.title || item.name}" data-poster="${item.poster_path || ''}" data-rating="${item.vote_average || 0}" style="border-radius:var(--radius-sm);margin-bottom:0.25rem">
+        <div class="suggestion-item" data-id="${item.id}" data-type="${item.media_type || 'movie'}" data-title="${item.title || item.name}" data-poster="${item.poster_path || ''}" data-rating="${item.vote_average || 0}" data-release="${(item.release_date || item.first_air_date || '').split('T')[0]}"
           ${item.poster_path ? `<img src="https://image.tmdb.org/t/p/w92${item.poster_path}" style="width:32px;height:48px;object-fit:cover;border-radius:4px">` : '<div style="width:32px;height:48px;background:var(--surface);border-radius:4px"></div>'}
           <div style="flex:1">
             <div style="font-size:0.875rem;font-weight:600">${item.title || item.name}</div>
@@ -1274,12 +1274,13 @@ if (dateInput) {
       resultsEl.querySelectorAll('.suggestion-item').forEach(el => {
         el.addEventListener('click', () => {
           selectedMovie = {
-            movieId: el.dataset.id,
-            mediaType: el.dataset.type,
-            title: el.dataset.title,
-            poster: el.dataset.poster,
-            rating: parseFloat(el.dataset.rating)
-          };
+  movieId: el.dataset.id,
+  mediaType: el.dataset.type,
+  title: el.dataset.title,
+  poster: el.dataset.poster,
+  rating: parseFloat(el.dataset.rating),
+  releaseDate: el.dataset.release
+};
           document.getElementById('timelineSearch').value = el.dataset.title;
           resultsEl.innerHTML = '';
         });
@@ -1293,6 +1294,10 @@ if (dateInput) {
     const today = new Date().toISOString().split('T')[0];
     if (date > today) {
       showToast('Cannot set a future date', 'error');
+      return;
+    }
+    if (selectedMovie.releaseDate && date < selectedMovie.releaseDate) {
+      showToast(`This was released on ${selectedMovie.releaseDate} — you can't log it before that!`, 'error');
       return;
     }
     try {
