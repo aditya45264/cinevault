@@ -1,4 +1,4 @@
-# 🎬 CineVault — OTT Content Discovery App
+# 🎬 BingeBrowse — OTT Content Discovery App
 
 A full-stack Netflix-inspired content discovery web application built with Node.js, Express, MongoDB Atlas, and TMDB API.
 
