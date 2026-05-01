@@ -47,7 +47,7 @@ function showToast(message, type = 'info', showTimelineBtn = false) {
   toast.innerHTML = `
     <span class="toast-icon">${icons[type]}</span>
     <span>${message}</span>
-    ${showTimelineBtn ? `<button onclick="navigateTo('timeline')" style="background:var(--accent);color:white;border:none;padding:0.3rem 0.75rem;border-radius:6px;font-size:0.75rem;cursor:pointer;margin-left:0.5rem;white-space:nowrap">Go to Timeline</button>` : ''}
+    ${showTimelineBtn ? `<button onclick="closeModal(); navigateTo('timeline')" style="background:var(--accent);color:white;border:none;padding:0.3rem 0.75rem;border-radius:6px;font-size:0.75rem;cursor:pointer;margin-left:0.5rem;white-space:nowrap">Go to Timeline</button>` : ''}
   `;
   container.appendChild(toast);
   setTimeout(() => {
@@ -1290,6 +1290,11 @@ if (dateInput) {
   document.getElementById('timelineAddBtn')?.addEventListener('click', async () => {
     if (!selectedMovie) return showToast('Please select a movie first', 'error');
     const date = document.getElementById('timelineDate').value;
+    const today = new Date().toISOString().split('T')[0];
+    if (date > today) {
+      showToast('Cannot set a future date', 'error');
+      return;
+    }
     try {
       await api.post('/history', {
         ...selectedMovie,
